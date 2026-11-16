@@ -1,21 +1,24 @@
 package yesweburp
 
-import burp.IBurpExtenderCallbacks
-import burp.IExtensionHelpers
+import burp.api.montoya.MontoyaApi
 import java.awt.Desktop
-import java.io.PrintWriter
+import java.io.IOException
 import java.net.URI
 
-const val VERSION = "2.0.2"
+const val VERSION = "3.0.0"
 
-lateinit var callbacks: IBurpExtenderCallbacks
-lateinit var helpers: IExtensionHelpers
-lateinit var stdout: PrintWriter
-lateinit var stderr: PrintWriter
+/** Set once by [YesWeBurp.initialize], before any UI is created. */
+lateinit var burpApi: MontoyaApi
+    internal set
 
-
-fun openInBrowser(url: String){
-    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+fun openInBrowser(url: String) {
+    if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        burpApi.logging().logToError("Cannot open $url: no browser available on this platform")
+        return
+    }
+    try {
         Desktop.getDesktop().browse(URI(url))
+    } catch (e: IOException) {
+        burpApi.logging().logToError("Failed to open $url", e)
     }
 }

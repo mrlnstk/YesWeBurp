@@ -1,10 +1,10 @@
 package yesweburp.config
 
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import yesweburp.callbacks
+import yesweburp.burpApi
 
 data class BurpScopeRule(
     var enabled: Boolean = true,
@@ -39,18 +39,17 @@ data class BurpConfigResponse(
 
 
 object BurpConfig {
-    val mapper: ObjectMapper = with(jacksonObjectMapper()) {
-        configure(
-            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-            false
-        )
+    val mapper: JsonMapper = JsonMapper.builder()
+        .addModule(KotlinModule.Builder().build())
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .build()
+
+    private inline fun <reified T> getConfigAsJson(path: String): T {
+        return mapper.readValue(burpApi.burpSuite().exportProjectOptionsAsJson(path))
     }
 
-    private inline fun <reified  T> getConfigAsJson(path: String): T{
-        return mapper.readValue(callbacks.saveConfigAsJson(path))
-    }
-    private inline fun <reified  T> setConfigAsJson(config: T){
-        callbacks.loadConfigFromJson(mapper.writeValueAsString(config))
+    private inline fun <reified T> setConfigAsJson(config: T) {
+        burpApi.burpSuite().importProjectOptionsFromJson(mapper.writeValueAsString(config))
     }
 
     fun addTargetScope(scopes: List<BurpScopeRule>){

@@ -1,9 +1,13 @@
 package yesweburp.ui.programs
 
-import swinger.*
+import swinger.BorderPanel
 import swinger.Button
+import swinger.GridBagPanel
+import swinger.GridPanel
 import swinger.Label
+import swinger.SList
 import swinger.ScrollPane
+import swinger.TabbedPane
 import yesweburp.Settings
 import yesweburp.api.Program
 import yesweburp.openInBrowser

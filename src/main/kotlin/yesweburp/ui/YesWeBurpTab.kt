@@ -1,35 +1,26 @@
 package yesweburp.ui
 
-import burp.ITab
 import yesweburp.Events.programsLoaded
-import yesweburp.callbacks
+import yesweburp.burpApi
 import yesweburp.ui.options.OptionsTab
 import yesweburp.ui.programs.ProgramTab
-import java.awt.Component
 import javax.swing.JTabbedPane
 
+class YesWeBurpTab : JTabbedPane(TOP) {
 
-class YesWeBurpTab : ITab {
+    private var programTab: ProgramTab? = null
 
-    override fun getTabCaption(): String {
-        return "YesWeBurp"
-    }
+    init {
+        add("Options", OptionsTab())
 
-    override fun getUiComponent(): Component {
-        val tab = JTabbedPane(JTabbedPane.TOP)
-        tab.add("Options", OptionsTab())
-
-        var programTab: ProgramTab? = null
         programsLoaded.listen { programs ->
-            if (programTab != null) {
-                tab.remove(programTab)
+            programTab?.let(::remove)
+            programTab = ProgramTab(programs).also {
+                add("Programs", it)
+                burpApi.userInterface().applyThemeToComponent(it)
             }
-            programTab = ProgramTab(programs)
-            tab.add("Programs", programTab)
         }
-        callbacks.customizeUiComponent(tab)
-        return tab
 
+        burpApi.userInterface().applyThemeToComponent(this)
     }
-
 }

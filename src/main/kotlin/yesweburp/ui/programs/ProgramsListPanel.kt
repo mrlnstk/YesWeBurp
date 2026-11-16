@@ -1,6 +1,10 @@
 package yesweburp.ui.programs
 
-import swinger.*
+import swinger.BorderPanel
+import swinger.Label
+import swinger.SList
+import swinger.ScrollPane
+import swinger.TextField
 import yesweburp.api.Program
 import java.awt.Color
 import java.awt.Component

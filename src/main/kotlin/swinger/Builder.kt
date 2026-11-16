@@ -1,4 +1,4 @@
-package  swinger
+package swinger
 
 import java.awt.*
 import java.awt.event.ItemEvent
@@ -9,10 +9,6 @@ import javax.swing.border.Border
 import javax.swing.border.EtchedBorder
 import javax.swing.border.TitledBorder
 import kotlin.reflect.KProperty
-
-
-interface IPanel
-
 
 
 class Button(text: String, build: (Button.() -> Unit)? = null) : JButton(text) {
@@ -73,7 +69,6 @@ open class BorderPanel(build: (BorderPanel.() -> Unit)? = null) : Panel() {
     }
 
     var left: Component by PositionedComponent(this, BorderLayout.LINE_START)
-    var right: Component by PositionedComponent(this, BorderLayout.LINE_END)
     var top: Component by PositionedComponent(this, BorderLayout.PAGE_START)
     var bottom: Component by PositionedComponent(this, BorderLayout.PAGE_END)
     var center: Component by PositionedComponent(this, BorderLayout.CENTER)
@@ -187,13 +182,16 @@ class TextField(text: String? = null, build: (TextField.() -> Unit)? = null) : J
 }
 
 class PasswordField(text: String? = null, build: (PasswordField.() -> Unit)? = null) : JPasswordField(text) {
-    override fun getText(): String {
-        return String(super.getPassword())
-    }
-
     init {
         if (build != null) build(this)
     }
+
+    /** The field's contents. [JPasswordField.getText] is deprecated in favour of [getPassword]. */
+    var value: String
+        get() = String(password)
+        set(v) {
+            text = v
+        }
 }
 
 class Label(text: String? = null, build: (Label.() -> Unit)? = null) : JLabel(text) {
@@ -207,6 +205,7 @@ open class ComboBox<T>(val values: Array<T>, build: (ComboBox<T>.() -> Unit)? = 
         if (build != null) build(this)
     }
 
+    @Suppress("UNCHECKED_CAST")
     val selected: T get() = selectedItem as T
 
     fun onChange(callback: (T) -> Unit) {

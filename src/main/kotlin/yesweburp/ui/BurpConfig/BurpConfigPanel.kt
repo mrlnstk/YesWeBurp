@@ -3,7 +3,7 @@ package yesweburp.ui.BurpConfig
 import swinger.*
 import yesweburp.api.Program
 import yesweburp.api.Scope
-import yesweburp.callbacks
+import yesweburp.burpApi
 import yesweburp.config.BurpConfig
 import yesweburp.config.BurpReplaceRule
 import yesweburp.config.BurpScopeRule
@@ -62,7 +62,7 @@ fun createConfigFrame(program: Program) {
 class BurpConfigWindow(program: Program) : JFrame("Configure Burp for ${program.title}") {
     init {
         defaultCloseOperation = DISPOSE_ON_CLOSE
-        callbacks.customizeUiComponent(this)
+        burpApi.userInterface().applyThemeToComponent(this)
         contentPane = BurpConfigPanel(program)
         val mainWindow = SwingUtilities.getWindowAncestor(this)
         pack()
@@ -160,8 +160,8 @@ class BurpConfigPanel(program: Program) : ColumnPanel() {
                 vgap = 5
                 addTitleBorder("User-Agent")
                 val uaTable = JTable(
-                        arrayOf(arrayOf("^User-Agent: (.*)\$", "User-Agent: \$1 ${program.user_agent}")),
-                        arrayOf("Match", "Replace")
+                    arrayOf(arrayOf("^User-Agent: (.*)\$", "User-Agent: \$1 ${program.user_agent}")),
+                    arrayOf("Match", "Replace")
                 )
                 uaTable.minimumSize = uaTable.preferredSize
                 uaTable.preferredScrollableViewportSize = uaTable.preferredSize
@@ -170,12 +170,14 @@ class BurpConfigPanel(program: Program) : ColumnPanel() {
                     onClick {
                         val match = uaTable.model.getValueAt(0, 0) as String;
                         val replace = uaTable.model.getValueAt(0, 1) as String;
-                        BurpConfig.addMatchReplace(BurpReplaceRule(
-                            rule_type = "request_header",
-                            string_match = match,
-                            string_replace = replace,
-                            comment = "${program.slug} - YesWeBurp"
-                        ))
+                        BurpConfig.addMatchReplace(
+                            BurpReplaceRule(
+                                rule_type = "request_header",
+                                string_match = match,
+                                string_replace = replace,
+                                comment = "${program.slug} - YesWeBurp"
+                            )
+                        )
 
                     }
                 }

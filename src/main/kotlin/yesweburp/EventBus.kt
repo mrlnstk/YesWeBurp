@@ -1,21 +1,22 @@
 package yesweburp
 
-
 class EventBus<T> {
-    private val callbacks = mutableListOf<Pair<Boolean, (T) -> Unit>>()
+    private class Listener<T>(val persistent: Boolean, val action: (T) -> Unit)
 
-    fun listen(cb: (T) -> Unit) {
-        callbacks.add(Pair(true, cb))
+    private val listeners = mutableListOf<Listener<T>>()
+
+    fun listen(action: (T) -> Unit) {
+        listeners.add(Listener(true, action))
     }
 
-    fun listenOnce(cb: (T) -> Unit){
-        callbacks.add(Pair(false, cb))
+    fun listenOnce(action: (T) -> Unit) {
+        listeners.add(Listener(false, action))
     }
 
     fun fire(data: T) {
-        callbacks.retainAll {
-            it.second(data)
-            it.first
-        }
+        // Snapshot first: a listener may add or remove listeners while it runs.
+        val current = listeners.toList()
+        listeners.removeAll { !it.persistent }
+        current.forEach { it.action(data) }
     }
 }

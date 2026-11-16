@@ -20,16 +20,21 @@ YesWeBurp also help you to instantly configure Burp according to the program rul
 - Click `Next`
 - The addon is now installed, a new tab named `YesWeBurp` should appear
 
-### From source 
+### From source
+
+Requires JDK 17 (or newer) and Maven.
+
 - `git clone 'https://github.com/yeswehack/YesWeBurp.git' <git_folder>`
-- Open the project with intellij IDEA
-- Compile with ctrl+F9
-- Open Burp on Extender / Extensions
+- `cd <git_folder> && mvn package`
+- Open Burp on Extensions / Installed
 - Click `Add`
 - Set Extension type as Java
-- Set Extension file to `<git_folder>/out/artifacts/YesWeBurp_jar/YesWeBurp.jar`
+- Set Extension file to `<git_folder>/target/YesWeBurp.jar`
 - Click `Next`
 - The addon is now installed, a new tab named `YesWeBurp` should appear
+
+`mvn package` produces a single self-contained jar: the Montoya API is `provided` by Burp at
+runtime, and every other dependency is shaded in.
 
 ### From BApp Store
 
@@ -50,6 +55,13 @@ The configuration options are available in the tab YesWeHack / Options
 
 
 ## Changelog
+- v3.0.0
+    - Migrated from the legacy Burp Extender API to the Burp Montoya API
+      (requires Burp 2023.1 or newer and JDK 17+)
+    - Settings are now stored via Montoya's preferences API
+    - Network calls run off the Swing event dispatch thread
+    - Fixed `Anonymous` authentication never (re)setting the session
+    - Maven now actually builds the Kotlin sources and produces a shaded `target/YesWeBurp.jar`
 - v2.0.2 - Change in yeswehack api
 - v2.0.1 - Fixed html rendering
 - v2.0.0 

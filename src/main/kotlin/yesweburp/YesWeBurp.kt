@@ -1,25 +1,14 @@
 package yesweburp
 
-import burp.IBurpExtender
-import burp.IBurpExtenderCallbacks
+import burp.api.montoya.BurpExtension
+import burp.api.montoya.MontoyaApi
 import yesweburp.ui.YesWeBurpTab
-import java.io.PrintWriter
 
+class YesWeBurp : BurpExtension {
+    override fun initialize(montoyaApi: MontoyaApi) {
+        burpApi = montoyaApi
 
-open class YesWeBurp : IBurpExtender {
-    override fun registerExtenderCallbacks(cb: IBurpExtenderCallbacks) {
-        callbacks = cb
-        helpers = cb.helpers
-        stdout = PrintWriter(callbacks.stdout, true)
-        stderr = PrintWriter(callbacks.stderr, true)
-
-        callbacks.setExtensionName("YesWeBurp")
-        callbacks.addSuiteTab(YesWeBurpTab())
-
+        burpApi.extension().setName("YesWeBurp $VERSION")
+        burpApi.userInterface().registerSuiteTab("YesWeBurp", YesWeBurpTab())
     }
-
 }
-
-/*
-
-* */
