@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/YesWeBurp.iml" filepath="$PROJECT_DIR$/YesWeBurp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yes-we-burp.iml" filepath="$PROJECT_DIR$/yes-we-burp.iml" />
     </modules>
   </component>
 </project>
